@@ -61,7 +61,7 @@ func (s SendGPT) Start() string {
 		return ""
 	}
 	req.Header.Add("Content-Type", "application/json")
-	req.Header.Add("Authorization", "Bearer "+"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")
+	req.Header.Add("Authorization", "Bearer "+"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")
 	req.Header.Add("Accept-Encoding", "gzip,deflate")
 	req.Header.Add("Content-Length", "1024")
 	req.Header.Add("Transfer-Encoding", "chunked")

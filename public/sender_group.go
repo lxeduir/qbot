@@ -1,7 +1,7 @@
 package public
 
 import (
-	"edulx/web/qbotdb"
+	"edulx/qbot/db"
 	"fmt"
 	"strconv"
 	"strings"
@@ -56,7 +56,7 @@ func GroupGPT(u User) {
 	cq.Name = append(cq.Name, "qq")
 	cq.Value = append(cq.Value, strconv.FormatInt(u.Sender.UserID, 10))
 	S.Stop = `[" ` + uid + `:"," AI:"]`
-	gpt, err := qbotdb.Get("GPT" + uid + "GID" + strconv.FormatInt(u.GroupID, 10))
+	gpt, err := db.Get("GPT" + uid + "GID" + strconv.FormatInt(u.GroupID, 10))
 	gpts := ""
 	if strings.Contains(gpt, strconv.FormatInt(u.Sender.UserID, 10)+":"+u.RawMessage[1:]) {
 		s.Requests(cq.Get() + "请不要重复发送")
@@ -65,7 +65,7 @@ func GroupGPT(u User) {
 	if err != nil {
 		S.Prompt = uid + ":" + u.RawMessage[1:] + "\n"
 		gpts = "AI:" + S.Start()
-		err1 := qbotdb.Set("GPT"+uid+"GID"+strconv.FormatInt(u.GroupID, 10), S.Prompt+gpts+"\n", time.Minute*5)
+		err1 := db.Set("GPT"+uid+"GID"+strconv.FormatInt(u.GroupID, 10), S.Prompt+gpts+"\n", time.Minute*5)
 		if err1 != nil {
 			cq.Value[0] = "2508339002"
 			s.Requests(cq.Get() + "出错了")
@@ -78,7 +78,7 @@ func GroupGPT(u User) {
 			s.Requests(cq.Get() + "对话过长，已重置")
 		}
 		gpts = S.Start()
-		err1 := qbotdb.Set("GPT"+uid+"GID"+strconv.FormatInt(u.GroupID, 10), S.Prompt+gpts+"\n", time.Minute)
+		err1 := db.Set("GPT"+uid+"GID"+strconv.FormatInt(u.GroupID, 10), S.Prompt+gpts+"\n", time.Minute)
 		if err1 != nil {
 			cq.Value[0] = "2508339002"
 			s.Requests(cq.Get() + "出错了")

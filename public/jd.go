@@ -207,9 +207,35 @@ func (j JdToken) FindLog(id string) string {
 	s := mp["data"].(string)
 	var strs []string
 	s1 := strings.Index(s, "--f--")
-	fmt.Println("s1=", s1)
 	s2 := strings.Index(s[s1+4:], "--f--")
-	fmt.Println("s2=", s2)
-	fmt.Println(strs)
+	space(strs)
+	space(s2)
 	return s
+}
+func (j JdToken) RunLog(id string) string {
+	url := "http://123.249.92.218:5700/open/crons/run"
+	method := "PUT"
+	client := &http.Client{}
+	p := strings.NewReader(`[` + id + `]`)
+	req, err := http.NewRequest(method, url, p)
+	if err != nil {
+		return "查询失败"
+	}
+	req.Header.Add("Authorization", j.TokenType+" "+j.Token)
+	res, err2 := client.Do(req)
+	if err2 != nil {
+		return "查询失败"
+	}
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+
+		}
+	}(res.Body)
+	body, err := io.ReadAll(res.Body)
+	fmt.Println(body)
+	mp := make(map[string]interface{})
+	err = json.Unmarshal(body, &mp)
+	fmt.Println(mp)
+	return ""
 }

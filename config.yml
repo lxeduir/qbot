@@ -1,0 +1,25 @@
+QqBot:
+    # 机器人QQ号
+    qq: 123456789
+    http:
+        # 机器人HTTP API地址
+        url: http://qqbot.lxlxlxlx.xyz/send_msg
+        # 机器人HTTP API密钥
+        key:
+    #收信端口
+    port: 5701
+    # 管理员QQ号
+    admin: 123456789
+ChatGpt:
+    #OpenAi API地址
+    url: https://api.openai.com/v1/completions
+    #OpenAi API密钥
+    key: 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
+    #OpenAi 模型选择
+    model: text-davinci-003
+    #OpenAi 模型参数
+    maxTokens: 2048
+    temperature: 0
+    topP: 1
+    frequencyPenalty: 0
+    presencePenalty: 0.6

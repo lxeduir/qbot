@@ -1,6 +1,7 @@
 package db
 
 import (
+	"errors"
 	"github.com/go-redis/redis"
 	"time"
 )
@@ -34,7 +35,12 @@ func Get(key string) (val string, err error) {
 	}
 	return val, nil
 }
-
-func Del(key string) {
+func Del(key string) (err error) {
 	redisDb.Del(key)
+	_, err = Get(key)
+	if err == nil {
+		e := errors.New("删除失败")
+		return e
+	}
+	return nil
 }

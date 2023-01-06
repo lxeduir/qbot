@@ -1,7 +1,7 @@
 package public
 
 import (
-	"edulx/web/qbotdb"
+	"edulx/qbot/db"
 	"strconv"
 	"strings"
 	"time"
@@ -10,12 +10,12 @@ import (
 func (u User) Private() {
 	s := SendData{}
 	s = s.Init(u)
-	Types, err := qbotdb.Get("Type" + strconv.FormatInt(u.Sender.UserID, 10))
+	Types, err := db.Get("Type" + strconv.FormatInt(u.Sender.UserID, 10))
 	if err != nil {
 		switch u.RawMessage {
 		case "GPT":
 			s.Requests("GPT模式已开启")
-			err := qbotdb.Set("Type"+strconv.FormatInt(u.Sender.UserID, 10), "GPT", time.Hour)
+			err := db.Set("Type"+strconv.FormatInt(u.Sender.UserID, 10), "GPT", time.Hour)
 			if err != nil {
 				s.Requests("出错了")
 			}
@@ -48,7 +48,7 @@ func (u User) Private() {
 			}
 			if i == 0 {
 				s.Requests("你还没有绑定京东账号")
-				err := qbotdb.Set("Type"+strconv.FormatInt(u.Sender.UserID, 10), "JD绑定", time.Minute)
+				err := db.Set("Type"+strconv.FormatInt(u.Sender.UserID, 10), "JD绑定", time.Minute)
 				if err != nil {
 					s.Requests("出错了")
 				} else {
@@ -96,8 +96,8 @@ func (u User) Private() {
 		switch Types {
 		case "GPT":
 			if u.RawMessage == "GPT" {
-				qbotdb.Del("Type" + strconv.FormatInt(u.Sender.UserID, 10))
-				_, err := qbotdb.Get("Type" + strconv.FormatInt(u.Sender.UserID, 10))
+				db.Del("Type" + strconv.FormatInt(u.Sender.UserID, 10))
+				_, err := db.Get("Type" + strconv.FormatInt(u.Sender.UserID, 10))
 				if err == nil {
 					s.Requests("关闭失败")
 				} else {
@@ -112,7 +112,7 @@ func (u User) Private() {
 			jt.Login()
 			jt.Add(u.RawMessage, strconv.FormatInt(u.Sender.UserID, 10))
 			s.Requests("绑定完成")
-			qbotdb.Del("Type" + strconv.FormatInt(u.Sender.UserID, 10))
+			db.Del("Type" + strconv.FormatInt(u.Sender.UserID, 10))
 			s.Requests("请查询是否绑定成功")
 		}
 	}
@@ -126,12 +126,12 @@ func privateGPT(u User) {
 
 	uid := strconv.FormatInt(u.Sender.UserID, 10)
 	S.Stop = `[" ` + uid + `:"," AI:"]`
-	gpt, err := qbotdb.Get("GPT" + uid)
+	gpt, err := db.Get("GPT" + uid)
 	gpts := ""
 	if err != nil {
 		S.Prompt = uid + ":" + u.RawMessage + "\n"
 		gpts = "AI:" + S.Start()
-		err1 := qbotdb.Set("GPT"+uid, S.Prompt+gpts+"\n", time.Minute*5)
+		err1 := db.Set("GPT"+uid, S.Prompt+gpts+"\n", time.Minute*5)
 
 		if err1 != nil {
 			s.Requests("出错了")
@@ -139,7 +139,7 @@ func privateGPT(u User) {
 	} else {
 		S.Prompt = gpt + uid + ":" + u.RawMessage + "\n"
 		gpts = S.Start()
-		err1 := qbotdb.Set("GPT"+uid, S.Prompt+gpts+"\n", time.Minute*5)
+		err1 := db.Set("GPT"+uid, S.Prompt+gpts+"\n", time.Minute*5)
 		if err1 != nil {
 			s.Requests("出错了")
 		}

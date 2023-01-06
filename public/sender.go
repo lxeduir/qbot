@@ -38,7 +38,7 @@ func space(i interface{}) {
 }
 func (u User) Start() {
 	switch u.MessageType {
-	case "private":
+	case "sender":
 		u.Private()
 	case "group":
 		u.Group()
